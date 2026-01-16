@@ -44,8 +44,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build et Push de l'image Docker
-        uses: docker/build-push-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3 # Assurez-vous d'utiliser Buildx
+
+      - name: Build and push
+        uses: docker/build-push-action@v6  # Utilisez la v6 pour plus de stabilité
         with:
           context: .
           file: ./Dockerfile
