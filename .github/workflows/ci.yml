@@ -1,0 +1,52 @@
+name: CI/CD Pipeline Node 18
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # --- PARTIE CI : Tests et Vérifications ---
+  continuous-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout du code
+        uses: actions/checkout@v3
+
+      - name: 2. Installation Node.js version 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 3. Installation des dépendances
+        run: npm install
+
+      - name: 4. Exécution des tests
+        run: npm test --if-present
+
+      - name: 5. Vérification du code (lint)
+        run: npm run lint --if-present
+
+  # --- PARTIE CD : Build et Push Docker (Seulement sur MAIN) ---
+  continuous-deployment:
+    needs: continuous-integration
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+
+      - name: Connexion à Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build et Push de l'image Docker
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-app-examen:latest
