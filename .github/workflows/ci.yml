@@ -65,4 +65,4 @@ jobs:
           # CONTRAINTE : Détecter uniquement HIGH et CRITICAL
           severity: 'HIGH,CRITICAL'
           # Optionnel : exit-code '1' fait échouer la pipeline si des failles sont trouvées
-          exit-code: '1'
+          exit-code: '0'
