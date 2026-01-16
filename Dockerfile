@@ -1,20 +1,21 @@
-# 1. Utiliser l'image officielle Node.js 18
-FROM node:18
+# Utilise une image officielle de Node.js 18
+FROM node:18-alpine
 
-# 2. Créer le dossier de travail dans le conteneur
-WORKDIR /usr/src/app
+# Définit le répertoire de travail dans le conteneur
+WORKDIR /app
 
-# 3. Copier les fichiers de dépendances
+# Copie les fichiers package.json et package-lock.json
 COPY package*.json ./
 
-# 4. Installer les dépendances du projet
+# Installe les dépendances
 RUN npm install
 
-# 5. Copier tout le reste du code source
+# Copie le reste des fichiers du projet
 COPY . .
 
-# 6. Exposer le port utilisé par l'application (le projet scotch-io utilise souvent 8080)
+# Expose le port utilisé par l'application Node.js
 EXPOSE 8080
 
-# 7. Lancer l'application
-CMD [ "node", "server.js" ]
+# Commande pour démarrer l'application
+CMD ["node", "server.js"]
+ 
