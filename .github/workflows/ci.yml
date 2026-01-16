@@ -48,5 +48,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./examen-test/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-app-examen:latest
