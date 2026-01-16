@@ -51,3 +51,18 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-app-examen:latest
+          
+  security-scan:
+    needs: continuous-deployment # CONTRAINTE : S'exécute APRÈS le build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          # On scanne l'image qui vient d'être poussée sur Docker Hub
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/node-app-examen:latest'
+          format: 'table'
+          # CONTRAINTE : Détecter uniquement HIGH et CRITICAL
+          severity: 'HIGH,CRITICAL'
+          # Optionnel : exit-code '1' fait échouer la pipeline si des failles sont trouvées
+          exit-code: '1'
